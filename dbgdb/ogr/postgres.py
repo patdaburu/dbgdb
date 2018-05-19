@@ -109,6 +109,16 @@ def schema_exists(url: str, schema: str):
             return crs.fetchone()[0] != 0
 
 
+def drop_schema(url: str, schema: str):
+    with connect(url=url) as cnx:
+        with cnx.cursor() as crs:
+            # Execute the SQL query that counts the schemas with a specified
+            # name.
+            crs.execute(
+                sql_phrasebook.drop_schema.format(schema)
+            )
+
+
 def create_db(
         url: str,
         dbname: str,

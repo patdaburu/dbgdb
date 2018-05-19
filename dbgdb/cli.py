@@ -23,7 +23,7 @@ from typing import Iterable
 import click
 import luigi
 from luijo.config import find_configs
-from .tasks.load_gdb import LoadGdbTask
+from .tasks.load_gdb import DropSchemaTask, LoadGdbTask
 
 
 class Info(object):
@@ -91,7 +91,23 @@ def run(tasks: Iterable[luigi.Task], info: Info):
 @click.argument('gdb', type=click.Path(exists=True))
 @pass_info
 def load(info: Info, url: str, schema: str, gdb: str):
-    task = LoadGdbTask(url=url, schema=schema, gdb=Path(gdb))
+    task = LoadGdbTask(url=url, schema=schema, gdb=gdb)
+    run([task], info)
+
+
+@cli.command()
+@click.option('-u', '--url',
+              default='postgresql://postgres@localhost:5432/gis')
+@click.argument('what', type=click.Choice(['database', 'schema']))
+@click.argument('name', type=str)
+@pass_info
+def drop(info: Info, url: str, what: str, name: str):
+    task: luigi.Task = None
+    if what == 'database':
+        print('NOT IMPLEMENTED YET')
+    elif what == 'schema':
+        task = DropSchemaTask(url=url, schema=name)
+    # Run the task.
     run([task], info)
 
 
