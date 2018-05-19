@@ -23,7 +23,8 @@ from typing import Iterable
 import click
 import luigi
 from luijo.config import find_configs
-from .tasks.load_gdb import DropSchemaTask, LoadGdbTask
+from .tasks.drop_schema import DropSchemaTask
+from .tasks.load_gdb import LoadGdbTask
 
 
 class Info(object):

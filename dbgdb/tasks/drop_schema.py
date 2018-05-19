@@ -11,7 +11,7 @@ drop a database.
 """
 import luigi
 from ..targets.postgres import PgSchemaTarget
-from ..ogr.postgres import drop_schema
+from ..db.postgres import drop_schema
 
 
 class DropSchemaTask(luigi.Task):

@@ -9,7 +9,7 @@
 This module contains PostgreSQL targets.
 """
 import luigi
-from ..ogr.postgres import connect, schema_exists
+from ..db.postgres import connect, schema_exists
 
 
 class PgSchemaTarget(luigi.Target):

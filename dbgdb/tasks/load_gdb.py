@@ -13,7 +13,6 @@ from pathlib import Path
 import luigi
 from ..targets.postgres import PgSchemaTarget
 from ..ogr.postgres import load
-from .drop_schema import DropSchemaTask
 
 
 class LoadGdbTask(luigi.Task):
