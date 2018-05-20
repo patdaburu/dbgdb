@@ -92,14 +92,14 @@ def load(inpath: Path,
     subprocess.check_call(cmd)
 
 
-def extract(output: Path,
+def extract(outdata: Path,
             schema: str = 'imports',
             url: str = 'postgresql://postgres@localhost:5432/postgres',
             driver: OgrDrivers = OgrDrivers.Spatialite):
     """
     Extract a schema from a PostgreSQL database to a file geodatabase.
 
-    :param output: the path to the output
+    :param outpath: the path to the output
     :param schema: the schema to export
     :param url: the URL of the Postgres database instance
     :param driver: the OGR driver to use
@@ -113,7 +113,7 @@ def extract(output: Path,
     cmd = [
         OGR2OGR,
         '-f', driver.value,
-        str(output),
+        str(outdata),
         f"PG:host='{dbp.hostname}' user='{dbp.username}' dbname='{dbname}' "
         f"port='{dbp.port}'"
     ]

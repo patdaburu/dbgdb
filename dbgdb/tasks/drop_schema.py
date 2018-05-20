@@ -53,5 +53,4 @@ class DropSchemaTask(luigi.Task):
         """
         Run the task.
         """
-        print("OK I AM DROPPING IT!")
         drop_schema(url=str(self.url), schema=str(self.schema))

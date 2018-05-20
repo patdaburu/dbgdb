@@ -23,7 +23,8 @@ import click
 import luigi
 from luijo.config import find_configs
 from .tasks.drop_schema import DropSchemaTask
-from .tasks.load_gdb import LoadGdbTask
+from .tasks.extract import ExtractTask
+from .tasks.load import LoadTask
 
 
 class Info(object):
@@ -91,15 +92,35 @@ def run(tasks: Iterable[luigi.Task], info: Info):
 @click.argument('inpath', type=click.Path(exists=True))
 @pass_info
 def load(info: Info, url: str, schema: str, inpath: str):
-    """gdb
-    Load a file geodatabase into a database instance.
+    """
+    Load data into a database instance.
 
     :param info: the :py:class:`Info` object
     :param url: the URL of the database instance
     :param schema: the schema into which feature classes should be loaded
     :param input_: the path to the input asset, like a file geodatabase (GDB)
     """
-    task = LoadGdbTask(url=url, schema=schema, inpath=inpath)
+    task = LoadTask(url=url, schema=schema, inpath=inpath)
+    run([task], info)
+
+
+@cli.command()
+@click.option('-u', '--url',
+              default='postgresql://postgres@localhost:5432/gis')
+@click.option('-s', '--schema',
+              default='imports')
+@click.argument('outdata', type=click.Path(exists=False))
+@pass_info
+def extract(info: Info, url: str, schema: str, outdata: str):
+    """
+    Extract data from a database instance.
+
+    :param info: the :py:class:`Info` object
+    :param url: the URL of the database instance
+    :param schema: the schema into which feature classes should be loaded
+    :param outdata: the path to the exported data
+    """
+    task = ExtractTask(url=url, schema=schema, outdata=outdata)
     run([task], info)
 
 
