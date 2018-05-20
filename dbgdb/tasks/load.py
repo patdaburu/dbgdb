@@ -31,8 +31,8 @@ class LoadTask(luigi.Task):
         default='imports',
         description='the target schema into which data is loaded'
     )
-    inpath: luigi.Parameter = luigi.Parameter(
-        description='the path to the thing you want to import'
+    indata: luigi.Parameter = luigi.Parameter(
+        description='the path to the data you want to import'
     )
 
     def requires(self):
@@ -56,9 +56,9 @@ class LoadTask(luigi.Task):
         """
         Run the task.
         """
-        input_path = Path(str(self.inpath))
+        input_path = Path(str(self.indata))
         load(
-            inpath=input_path,
+            indata=input_path,
             url=str(self.url),
             schema=str(self.schema),
             overwrite=True,

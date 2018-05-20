@@ -6,15 +6,11 @@
 .. currentmodule:: dbgdb.ogr.postgres
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
-This module contains functions
+This module contains wrapper functions for work that would generally be handled
+by OGR/GDAL.
 """
-# import json
-# from pathlib import Path
 from enum import Enum
 from urllib.parse import urlparse, ParseResult
-# from addict import Dict
-# import psycopg2
-# from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from pathlib import Path
 import subprocess
 from . import OGR2OGR
@@ -36,7 +32,7 @@ class OgrDrivers(Enum):
     PostGIS = 'PostgreSQL'
 
 
-def load(inpath: Path,
+def load(indata: Path,
          url: str = 'postgresql://postgres@localhost:5432/postgres',
          schema: str = 'imports',
          overwrite: bool = True,
@@ -46,7 +42,7 @@ def load(inpath: Path,
     """
     Load a file geodatabase (GDB) into a Postgres database.
 
-    :param inpath: the path to the file geodatabase
+    :param indata: the path to the file geodatabase
     :param url: the URL of the Postgres instance
     :param schema: the target schema
     :param overwrite: Overwrite existing data?
@@ -87,7 +83,7 @@ def load(inpath: Path,
     if use_copy:
         cmd.extend(['--config', 'PG_USE_COPY', 'YES'])
     # Lastly, add the target geodatabase.
-    cmd.append(str(inpath))
+    cmd.append(str(indata))
     # https://gis.stackexchange.com/questions/154004/execute-ogr2ogr-from-python
     subprocess.check_call(cmd)
 
@@ -99,7 +95,7 @@ def extract(outdata: Path,
     """
     Extract a schema from a PostgreSQL database to a file geodatabase.
 
-    :param outpath: the path to the output
+    :param outdata: the path to the output
     :param schema: the schema to export
     :param url: the URL of the Postgres database instance
     :param driver: the OGR driver to use

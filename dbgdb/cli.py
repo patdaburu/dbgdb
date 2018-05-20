@@ -89,9 +89,9 @@ def run(tasks: Iterable[luigi.Task], info: Info):
               default='postgresql://postgres@localhost:5432/gis')
 @click.option('-s', '--schema',
               default='imports')
-@click.argument('inpath', type=click.Path(exists=True))
+@click.argument('indata', type=click.Path(exists=True))
 @pass_info
-def load(info: Info, url: str, schema: str, inpath: str):
+def load(info: Info, url: str, schema: str, indata: str):
     """
     Load data into a database instance.
 
@@ -100,7 +100,7 @@ def load(info: Info, url: str, schema: str, inpath: str):
     :param schema: the schema into which feature classes should be loaded
     :param input_: the path to the input asset, like a file geodatabase (GDB)
     """
-    task = LoadTask(url=url, schema=schema, inpath=inpath)
+    task = LoadTask(url=url, schema=schema, indata=indata)
     run([task], info)
 
 
