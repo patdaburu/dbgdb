@@ -46,8 +46,8 @@ class PgSchemaTarget(luigi.Target):
         # schema does not exist.
         if self._dne:
             return not _exists
-        else:  # Otherwise, we can just give the more intuitive answer.
-            return _exists
+        # Otherwise, we can just give the more intuitive answer.
+        return _exists
 
     def connect(self):
         """

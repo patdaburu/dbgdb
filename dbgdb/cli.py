@@ -18,7 +18,6 @@ can be used as a handy facility for running the task from a command line.
     `Read-The-Docs <http://luigi.readthedocs.io/en/stable/>`_ page.
 """
 import multiprocessing
-from pathlib import Path
 from typing import Iterable
 import click
 import luigi
@@ -92,6 +91,14 @@ def run(tasks: Iterable[luigi.Task], info: Info):
 @click.argument('gdb', type=click.Path(exists=True))
 @pass_info
 def load(info: Info, url: str, schema: str, gdb: str):
+    """
+    Load a file geodatabase into a database instance.
+
+    :param info: the :py:class:`Info` object
+    :param url: the URL of the database instance
+    :param schema: the schema into which feature classes should be loaded
+    :param gdb: the path to the file geodatabase (GDB)
+    """
     task = LoadGdbTask(url=url, schema=schema, gdb=gdb)
     run([task], info)
 
@@ -103,6 +110,14 @@ def load(info: Info, url: str, schema: str, gdb: str):
 @click.argument('name', type=str)
 @pass_info
 def drop(info: Info, url: str, what: str, name: str):
+    """
+    Drop a database or schema.
+
+    :param info: the :py:class:`Info` object
+    :param url: the URL of the database instance
+    :param what: `database` or `schema`
+    :param name: the name of the database or schema
+    """
     task: luigi.Task = None
     if what == 'database':
         print('NOT IMPLEMENTED YET')

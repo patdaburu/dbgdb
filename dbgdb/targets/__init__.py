@@ -3,8 +3,8 @@
 
 # Created by pat on 5/18/18
 """
-.. currentmodule:: __init__.py
+.. currentmodule::dbgdb.db.targets
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
-Say something descriptive about the '__init__.py' module.
+Custom targets for the dbgdb package.
 """
