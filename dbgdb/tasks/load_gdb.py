@@ -31,8 +31,8 @@ class LoadGdbTask(luigi.Task):
         default='imports',
         description='the target schema into which data is loaded'
     )
-    gdb: luigi.Parameter = luigi.Parameter(
-        description='the path to the file geodatabase (gdb)'
+    inpath: luigi.Parameter = luigi.Parameter(
+        description='the path to the input asset, like a file geodatabase'
     )
 
     def requires(self):
@@ -56,9 +56,9 @@ class LoadGdbTask(luigi.Task):
         """
         Run the task.
         """
-        gdb_path = Path(str(self.gdb))
+        input_path = Path(str(self.inpath))
         load(
-            gdb=gdb_path,
+            inpath=input_path,
             url=str(self.url),
             schema=str(self.schema),
             overwrite=True,

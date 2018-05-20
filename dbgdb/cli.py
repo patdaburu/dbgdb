@@ -88,18 +88,18 @@ def run(tasks: Iterable[luigi.Task], info: Info):
               default='postgresql://postgres@localhost:5432/gis')
 @click.option('-s', '--schema',
               default='imports')
-@click.argument('gdb', type=click.Path(exists=True))
+@click.argument('inpath', type=click.Path(exists=True))
 @pass_info
-def load(info: Info, url: str, schema: str, gdb: str):
-    """
+def load(info: Info, url: str, schema: str, inpath: str):
+    """gdb
     Load a file geodatabase into a database instance.
 
     :param info: the :py:class:`Info` object
     :param url: the URL of the database instance
     :param schema: the schema into which feature classes should be loaded
-    :param gdb: the path to the file geodatabase (GDB)
+    :param input_: the path to the input asset, like a file geodatabase (GDB)
     """
-    task = LoadGdbTask(url=url, schema=schema, gdb=gdb)
+    task = LoadGdbTask(url=url, schema=schema, inpath=inpath)
     run([task], info)
 
 

@@ -10,6 +10,7 @@ This module contains functions
 """
 # import json
 # from pathlib import Path
+from enum import Enum
 from urllib.parse import urlparse, ParseResult
 # from addict import Dict
 # import psycopg2
@@ -26,21 +27,32 @@ from ..db.postgres import (
 )
 
 
-def load(gdb: Path,
+class OgrDrivers(Enum):
+    """
+    These are the supported OGR drivers.
+    """
+    GeoPackage = 'GPKG'
+    Spatialite = 'SQLITE'
+    PostGIS = 'PostgreSQL'
+
+
+def load(inpath: Path,
          url: str = 'postgresql://postgres@localhost:5432/postgres',
          schema: str = 'imports',
          overwrite: bool = True,
          progress: bool = True,
-         use_copy: bool = True):
+         use_copy: bool = True,
+         driver: OgrDrivers = OgrDrivers.PostGIS):
     """
     Load a file geodatabase (GDB) into a Postgres database.
 
-    :param gdb: the path to the file geodatabase
+    :param inpath: the path to the file geodatabase
     :param url: the URL of the Postgres instance
     :param schema: the target schema
     :param overwrite: Overwrite existing data?
     :param progress: Show progress?
     :param use_copy: Use COPY instead of INSERT when loading?
+    :param driver: the OGR driver to use
     """
     # Parse the URL.  (We'll need the pieces to construct an ogr2ogr connection
     # string.)
@@ -59,7 +71,7 @@ def load(gdb: Path,
     # Let's start putting the command string together.
     cmd = [
         OGR2OGR,
-        '-f', 'PostgreSQL',
+        '-f', driver.value,
         f"PG:host='{dbp.hostname}' user='{dbp.username}' dbname='{dbname}' "
         f"port='{dbp.port}'",
         '-lco', f'SCHEMA={schema}'
@@ -75,20 +87,22 @@ def load(gdb: Path,
     if use_copy:
         cmd.extend(['--config', 'PG_USE_COPY', 'YES'])
     # Lastly, add the target geodatabase.
-    cmd.append(str(gdb))
+    cmd.append(str(inpath))
     # https://gis.stackexchange.com/questions/154004/execute-ogr2ogr-from-python
     subprocess.check_call(cmd)
 
 
-def extract(gdb: Path,
+def extract(output: Path,
+            schema: str = 'imports',
             url: str = 'postgresql://postgres@localhost:5432/postgres',
-            schema: str = 'imports'):
+            driver: OgrDrivers = OgrDrivers.Spatialite):
     """
     Extract a schema from a PostgreSQL database to a file geodatabase.
 
-    :param gdb: the path to the output GDB file
-    :param url: the URL of the Postgres database instance
+    :param output: the path to the output
     :param schema: the schema to export
+    :param url: the URL of the Postgres database instance
+    :param driver: the OGR driver to use
     """
     # Parse the URL.  (We'll need the pieces to construct an ogr2ogr connection
     # string.)
@@ -98,8 +112,8 @@ def extract(gdb: Path,
     # Let's put the command together.
     cmd = [
         OGR2OGR,
-        '-f', 'FileGDB',
-        str(gdb),
+        '-f', driver.value,
+        str(output),
         f"PG:host='{dbp.hostname}' user='{dbp.username}' dbname='{dbname}' "
         f"port='{dbp.port}'"
     ]
