@@ -42,7 +42,8 @@ setup(
     'addict>=2.1.3,<3',
     'click>=6.7,<7',
     'luigi>=2.7.5,<3',
-    'luijo>=0.0.17,<0.1'
+    'luijo>=0.0.17,<0.1',
+    'psycopg2-binary>=2.7.4,<3'
   ],
   entry_points="""
     [console_scripts]

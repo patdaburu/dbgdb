@@ -1,6 +1,6 @@
 # dbgdb
 
-This is a library containing [Luigi](http://luigi.readthedocs.io/en/stable/index.html) tasks for loading data into (and extracting data from) your GIS databases.  The library also comes with a command-line interface based on [Click](http://click.pocoo.org/5/) that can be helpful for running tasks individually.
+This is a library containing [Luigi](http://luigi.readthedocs.io/en/stable/index.html) tasks to help you get that data into (and out of) your GIS databases.  The library also comes with a command-line interface based on [Click](http://click.pocoo.org/5/) that can be helpful for running tasks individually.
 
 ## Getting Started
 
