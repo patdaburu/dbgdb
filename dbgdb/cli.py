@@ -22,9 +22,9 @@ from typing import Iterable
 import click
 import luigi
 from luijo.config import find_configs
-from .tasks.drop_schema import DropSchemaTask
-from .tasks.extract import ExtractTask
-from .tasks.load import LoadTask
+from dbgdb.tasks.postgres.drop import PgDropSchemaTask
+from dbgdb.tasks.postgres.extract import PgExtractTask
+from dbgdb.tasks.postgres.load import PgLoadTask
 
 
 class Info(object):
@@ -100,7 +100,7 @@ def load(info: Info, url: str, schema: str, indata: str):
     :param schema: the schema into which feature classes should be loaded
     :param input_: the path to the input asset, like a file geodatabase (GDB)
     """
-    task = LoadTask(url=url, schema=schema, indata=indata)
+    task = PgLoadTask(url=url, schema=schema, indata=indata)
     run([task], info)
 
 
@@ -120,7 +120,7 @@ def extract(info: Info, url: str, schema: str, outdata: str):
     :param schema: the schema into which feature classes should be loaded
     :param outdata: the path to the exported data
     """
-    task = ExtractTask(url=url, schema=schema, outdata=outdata)
+    task = PgExtractTask(url=url, schema=schema, outdata=outdata)
     run([task], info)
 
 
@@ -143,7 +143,7 @@ def drop(info: Info, url: str, what: str, name: str):
     if what == 'database':
         print('NOT IMPLEMENTED YET')
     elif what == 'schema':
-        task = DropSchemaTask(url=url, schema=name)
+        task = PgDropSchemaTask(url=url, schema=name)
     # Run the task.
     run([task], info)
 

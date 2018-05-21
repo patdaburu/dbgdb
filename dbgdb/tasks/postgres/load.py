@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Created by pat on 5/20/18
+# Created by pat on 4/21/18
 """
-.. currentmodule:: dbgdb.tasks.extract
+.. currentmodule:: dbgdb.tasks.load
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
-This module contains the :py:class:`ExtractTask` task which you can use to
-extract data from your database instance.
+This module contains the :py:class:`LoadTask` task which you can use to
+load a file geodatabase into your database instance.
 """
 from pathlib import Path
-from typing import cast
 import luigi
-from ..ogr.postgres import extract, OgrDrivers
+from dbgdb.targets.postgres import PgSchemaTarget
+from dbgdb.ogr.postgres import load
 
 
-class ExtractTask(luigi.Task):
+class PgLoadTask(luigi.Task):
     """
     This task loads a file geodatabase into a database instance.
 
@@ -31,14 +31,9 @@ class ExtractTask(luigi.Task):
         default='imports',
         description='the target schema into which data is loaded'
     )
-    outdata: luigi.Parameter = luigi.Parameter(
-        description='the path to which you want to export your data'
+    indata: luigi.Parameter = luigi.Parameter(
+        description='the path to the data you want to import'
     )
-    # driver: luigi.Parameter = luigi.EnumParameter(
-    #     enum=OgrDrivers,
-    #     default=OgrDrivers.Spatialite,
-    #     description='the export driver to use'
-    # )
 
     def requires(self):
         """
@@ -48,22 +43,25 @@ class ExtractTask(luigi.Task):
         """
         return []
 
-    def output(self) -> luigi.LocalTarget:
+    def output(self) -> PgSchemaTarget:
         """
         This task returns a :py:class:`PgSchemaTarget` that points to the
-        target schema where the GDB was loaded.
+        target schema where the data was loaded.
 
         :return: the PostgreSQL schema target
         """
-        return luigi.LocalTarget(path=str(self.outdata))
+        return PgSchemaTarget(url=str(self.url), schema=str(self.schema))
 
     def run(self):
         """
         Run the task.
         """
-        outdata_path = Path(str(self.outdata))
-        extract(outdata=outdata_path,
-                url=str(self.url),
-                schema=str(self.schema))
-                #driver=cast(OgrDrivers, self.driver))
-
+        input_path = Path(str(self.indata))
+        load(
+            indata=input_path,
+            url=str(self.url),
+            schema=str(self.schema),
+            overwrite=True,
+            progress=False,
+            use_copy=True
+        )

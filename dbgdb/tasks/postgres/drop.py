@@ -10,11 +10,11 @@ This module contains the :py:class:`DropDbTask` task which you can use to
 drop a database.
 """
 import luigi
-from ..targets.postgres import PgSchemaTarget
-from ..db.postgres import drop_schema
+from dbgdb.targets.postgres import PgSchemaTarget
+from dbgdb.db.postgres import drop_schema
 
 
-class DropSchemaTask(luigi.Task):
+class PgDropSchemaTask(luigi.Task):
     """
     This task loads a file geodatabase into a database instance.
 
