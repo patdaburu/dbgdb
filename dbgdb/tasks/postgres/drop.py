@@ -19,7 +19,7 @@ class PgDropSchemaTask(luigi.Task):
     This task loads a file geodatabase into a database instance.
 
     :cvar url: the URL of the target database
-    :cvar admindb: the target schema
+    :cvar schema: the target schema
     """
     url: luigi.Parameter = luigi.Parameter(
         default='postgresql://postgres@localhost:5432/postgres',

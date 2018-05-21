@@ -21,7 +21,7 @@ class PgLoadTask(luigi.Task):
 
     :cvar url: the URL of the target database
     :cvar schema: the target schema
-    :cvar gdb: the path to the file geodatabase
+    :cvar indata: the path to the input data
     """
     url: luigi.Parameter = luigi.Parameter(
         default='postgresql://postgres@localhost:5432/postgres',

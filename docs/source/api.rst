@@ -14,6 +14,14 @@ dbgdb
     :undoc-members:
     :show-inheritance:
 
+-----------------
+dbgdb.db.postgres
+-----------------
+.. automodule:: dbgdb.db.postgres
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 ---------
 dbgdb.cli
 ---------
@@ -22,10 +30,42 @@ dbgdb.cli
     :undoc-members:
     :show-inheritance:
 
------------
-dbgdb.tasks
------------
-.. automodule:: dbgdb.cli
+------------------
+dbgdb.ogr.postgres
+------------------
+.. automodule:: dbgdb.ogr.postgres
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+----------------------
+dbgdb.targets.postgres
+----------------------
+.. automodule:: dbgdb.targets.postgres
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+-------------------------
+dbgdb.tasks.postgres.drop
+-------------------------
+.. automodule:: dbgdb.tasks.postgres.drop
+      :members:
+      :undoc-members:
+      :show-inheritance:
+
+----------------------------
+dbgdb.tasks.postgres.extract
+----------------------------
+.. automodule:: dbgdb.tasks.postgres.extract
+      :members:
+      :undoc-members:
+      :show-inheritance:
+
+-------------------------
+dbgdb.tasks.postgres.load
+-------------------------
+.. automodule:: dbgdb.tasks.postgres.load
       :members:
       :undoc-members:
       :show-inheritance:

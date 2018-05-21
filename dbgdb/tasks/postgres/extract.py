@@ -21,7 +21,8 @@ class PgExtractTask(luigi.Task):
 
     :cvar url: the URL of the target database
     :cvar schema: the target schema
-    :cvar gdb: the path to the file geodatabase
+    :cvar outdata: the path to which data should be exported
+    :cvar driver: the driver to use for exporting data
     """
     url: luigi.Parameter = luigi.Parameter(
         default='postgresql://postgres@localhost:5432/postgres',
@@ -34,11 +35,11 @@ class PgExtractTask(luigi.Task):
     outdata: luigi.Parameter = luigi.Parameter(
         description='the path to which you want to export your data'
     )
-    # driver: luigi.Parameter = luigi.EnumParameter(
-    #     enum=OgrDrivers,
-    #     default=OgrDrivers.Spatialite,
-    #     description='the export driver to use'
-    # )
+    driver: luigi.Parameter = luigi.EnumParameter(
+        enum=OgrDrivers,
+        default=OgrDrivers.Spatialite,
+        description='the export driver to use'
+    )
 
     def requires(self):
         """
@@ -64,6 +65,5 @@ class PgExtractTask(luigi.Task):
         outdata_path = Path(str(self.outdata))
         extract(outdata=outdata_path,
                 url=str(self.url),
-                schema=str(self.schema))
-                #driver=cast(OgrDrivers, self.driver))
-
+                schema=str(self.schema),
+                driver=cast(OgrDrivers, self.driver))

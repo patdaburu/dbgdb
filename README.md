@@ -4,15 +4,37 @@ This is a library containing [Luigi](http://luigi.readthedocs.io/en/stable/index
 
 ## Getting Started
 
+
 ### Prerequisites
 
-What things you need to install the software and how to install them
+#### pip install
+You can use pip to install the library itself.
 
-```
+```bash
 pip install dbgdb
 ```
 
+#### GDAL/OGR
+You will also need `ogr2ogr` which you can get by installing [GDAL](http://www.gdal.org/).
+
+**Note: In this early version we expect `ogr2ogr` to be in your system path.  Improvements on that point are forthcoming.**
+
+
 ## Using Tasks
+
+This library contains a number of tasks that you can use in your Luigi pipelines.
+
+### PgImportTask
+
+Use `PgImportTask` task to import your data (likely a file geodatabase) to your PostgreSQL database.
+
+### PgExtractTask
+
+Use a `PgExtractTask` to get your data out of the database.
+
+### PgDropSchemaTask
+
+If you need to drop the import schema because you're starting the process over, use a `PgDropSchemaTask`.
 
 ## Using the Command Line
 
@@ -23,7 +45,7 @@ Most of the commands you run with the command-line interface (CLI) create Luigi 
 ### Getting Help
 `dbgdb` has its own command-line help.
 
-```
+```bash
 dbgdb --help
 ```
 

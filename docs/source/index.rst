@@ -10,7 +10,7 @@
 dbgdb
 =====
 
-Data pipeline utilities to help you get data into and out of your database.
+Data pipeline tasks to help you get that data into and out of your database.
 
 .. toctree::
    :maxdepth: 2
