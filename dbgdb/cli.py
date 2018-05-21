@@ -69,7 +69,8 @@ def run(tasks: Iterable[luigi.Task], info: Info):
     """
     Run tasks on the local scheduler.
 
-
+    :param tasks: the tasks to run
+    :param info: the :py:class:`Info` object containing other parameters
     """
     params = {
         'workers': info.workers
@@ -86,19 +87,16 @@ def run(tasks: Iterable[luigi.Task], info: Info):
 
 @cli.command()
 @click.option('-u', '--url',
-              default='postgresql://postgres@localhost:5432/gis')
+              default='postgresql://postgres@localhost:5432/gis',
+              help='the URL of the database instance')
 @click.option('-s', '--schema',
-              default='imports')
+              default='imports',
+              help='the target schema')
 @click.argument('indata', type=click.Path(exists=True))
 @pass_info
 def load(info: Info, url: str, schema: str, indata: str):
     """
     Load data into a database instance.
-
-    :param info: the :py:class:`Info` object
-    :param url: the URL of the database instance
-    :param schema: the schema into which feature classes should be loaded
-    :param input_: the path to the input asset, like a file geodatabase (GDB)
     """
     task = PgLoadTask(url=url, schema=schema, indata=indata)
     run([task], info)
@@ -106,19 +104,16 @@ def load(info: Info, url: str, schema: str, indata: str):
 
 @cli.command()
 @click.option('-u', '--url',
-              default='postgresql://postgres@localhost:5432/gis')
+              default='postgresql://postgres@localhost:5432/gis',
+              help='the URL of the database instance')
 @click.option('-s', '--schema',
-              default='imports')
+              default='imports',
+              help='the schema that contains the data')
 @click.argument('outdata', type=click.Path(exists=False))
 @pass_info
 def extract(info: Info, url: str, schema: str, outdata: str):
     """
     Extract data from a database instance.
-
-    :param info: the :py:class:`Info` object
-    :param url: the URL of the database instance
-    :param schema: the schema into which feature classes should be loaded
-    :param outdata: the path to the exported data
     """
     task = PgExtractTask(url=url, schema=schema, outdata=outdata)
     run([task], info)
@@ -126,22 +121,18 @@ def extract(info: Info, url: str, schema: str, outdata: str):
 
 @cli.command()
 @click.option('-u', '--url',
-              default='postgresql://postgres@localhost:5432/gis')
+              default='postgresql://postgres@localhost:5432/gis',
+              help='the URL of the database instance')
 @click.argument('what', type=click.Choice(['database', 'schema']))
 @click.argument('name', type=str)
 @pass_info
 def drop(info: Info, url: str, what: str, name: str):
     """
     Drop a database or schema.
-
-    :param info: the :py:class:`Info` object
-    :param url: the URL of the database instance
-    :param what: `database` or `schema`
-    :param name: the name of the database or schema
     """
     task: luigi.Task = None
     if what == 'database':
-        print('NOT IMPLEMENTED YET')
+        click.echo('NOT IMPLEMENTED YET')
     elif what == 'schema':
         task = PgDropSchemaTask(url=url, schema=name)
     # Run the task.
