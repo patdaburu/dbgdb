@@ -26,15 +26,15 @@ This library contains a number of tasks that you can use in your Luigi pipelines
 
 ### PgImportTask
 
-Use `PgImportTask` task to import your data (likely a file geodatabase) to your PostgreSQL database.
+Use [`PgImportTask`](https://dbgdb.readthedocs.io/en/latest/api.html#dbgdb.tasks.postgres.load.PgLoadTask) task to import your data (likely a file geodatabase) to your PostgreSQL database.
 
 ### PgExtractTask
 
-Use a `PgExtractTask` to get your data out of the database.
+Use a [`PgExtractTask`](https://dbgdb.readthedocs.io/en/latest/api.html#dbgdb.tasks.postgres.extract.PgExtractTask) to get your data out of the database.
 
 ### PgDropSchemaTask
 
-If you need to drop the import schema because you're starting the process over, use a `PgDropSchemaTask`.
+If you need to drop the import schema because you're starting the process over, use  [`PgDropSchemaTask`](https://dbgdb.readthedocs.io/en/latest/api.html#dbgdb.tasks.postgres.drop.PgDropSchemaTask).
 
 ## Using the Command Line
 
