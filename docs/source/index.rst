@@ -10,12 +10,17 @@
 dbgdb
 =====
 
-Data pipeline tasks to help you get that data into and out of your database.
+This is a library containing
+`Luigi <http://luigi.readthedocs.io/en/stable/index.html>`_ tasks to help you get
+that data into (and out of) your GIS databases.  The library also comes with a
+command-line interface based on `Click <http://click.pocoo.org/5/)>`_ that can
+be helpful for running tasks individually.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   getting_started
    api
    requirements
 

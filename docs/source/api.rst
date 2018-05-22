@@ -1,5 +1,10 @@
 .. _api-doc:
 
+.. image:: _static/images/logo.svg
+   :width: 80px
+   :alt: dbgdb
+   :align: right
+
 .. toctree::
     :glob:
 

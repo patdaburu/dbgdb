@@ -24,9 +24,9 @@ You will also need `ogr2ogr` which you can get by installing [GDAL](http://www.g
 
 This library contains a number of tasks that you can use in your Luigi pipelines.
 
-### PgImportTask
+### PgLoadTask
 
-Use [`PgImportTask`](https://dbgdb.readthedocs.io/en/latest/api.html#dbgdb.tasks.postgres.load.PgLoadTask) task to import your data (likely a file geodatabase) to your PostgreSQL database.
+Use [`PgLoadTask`](https://dbgdb.readthedocs.io/en/latest/api.html#dbgdb.tasks.postgres.load.PgLoadTask) task to import your data (likely a file geodatabase) to your PostgreSQL database.
 
 ### PgExtractTask
 
@@ -58,7 +58,7 @@ dbgdb -l load --schema myschema /path/to/your/data.gdb
 
 ### Extract Data
 
-You can extract all of the data within a schema to an output file.
+You can extract all of the data within a schema to an output file with the `extract` subcommand.
 ```bash
 dbgdb -l extract  --schema myschema /path/to/your/exported/data.db
 ```
