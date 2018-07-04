@@ -18,6 +18,8 @@ import luigi.worker
 from mock import patch
 import testing.postgresql
 from dbgdb.db.postgres import schema_exists
+from dbgdb.ogr.postgres import OgrDrivers
+from dbgdb.tasks.postgres.extract import PgExtractTask
 from dbgdb.tasks.postgres.load import PgLoadTask
 
 
@@ -47,15 +49,36 @@ class PgLoadTaskTestSuite(unittest.TestCase):
         # Create the temporary database.
         pgdb = testing.postgresql.Postgresql()
         try:
-            # Run the 'load' task.
-            worker = luigi.worker.Worker()
-            worker.add(PgLoadTask(
+            # PART ONE: Run the 'load' task.
+            load_worker = luigi.worker.Worker()
+            load_worker.add(PgLoadTask(
                 url=pgdb.url(),
                 schema='test',
                 indata=test_gdb_path,
             ))
-            worker.run()
+            load_worker.run()
+            # Make sure the schema was created in the database.
             self.assertTrue(schema_exists(url=pgdb.url(), schema='test'))
+
+            # PART TWO: Run the 'extract' task.
+            outdata_prefix = str(Path(temp_dir) / 'output')
+            for driver in [OgrDrivers.Spatialite]:
+                # The path to the output file will use the driver enumeration
+                # value as its extension.
+                outdata = f'{Path(outdata_prefix)}.{driver.value}'
+                extract_worker = luigi.worker.Worker()
+                extract_worker.add(PgExtractTask(
+                    url=pgdb.url(),
+                    schema='test',
+                    outdata=str(outdata),
+                    driver=driver
+                ))
+                extract_worker.run()
+                self.assertTrue(
+                    Path.exists(Path(outdata)),
+                    msg=f'File {outdata} was not created.'
+                )
+
         finally:
             pgdb.stop()
             shutil.rmtree(temp_dir)
