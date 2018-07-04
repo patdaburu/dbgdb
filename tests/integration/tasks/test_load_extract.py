@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 """
-.. currentmodule:: test_tasks.py
+.. currentmodule:: test_load_extract
 .. moduleauthor:: Pat Daburu pat@daburu.net
 
-This is the test module for loading tasks.
+This is an integration test module for the :py:class:`PgLoadTask` and
+:py:class:`PgExtractTask`.
 """
 
 from pathlib import Path
@@ -20,8 +21,6 @@ from dbgdb.db.postgres import schema_exists
 from dbgdb.ogr.postgres import OgrDrivers
 from dbgdb.tasks.postgres.extract import PgExtractTask
 from dbgdb.tasks.postgres.load import PgLoadTask
-import pytest
-
 
 # To learn more about mocking Luigi objects, visit the link below.
 # http://luigi.readthedocs.io/en/stable/api/luigi.mock.html
@@ -52,9 +51,8 @@ class PgLoadExtractTaskTestSuite(unittest.TestCase):
 
     def test_LoadExtract(self):
         """
-        Arrange: Create a temporary database.
-        Act: Load the data model.
-        Assert: No errors occurred.
+        Load data into a database using a :py:class:`PgLoadTask` and extract
+        it using a :py:class:`PgExtractTask`.
         """
         # Where is the test data?
         test_data_zip_path = \
