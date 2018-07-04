@@ -36,9 +36,11 @@ class PgLoadTaskTestSuite(unittest.TestCase):
         Assert: No errors occurred.
         """
         # Where is the test data?
-        test_data_zip_path = (
-                Path(__file__).resolve().parent.parent / 'data/test.gdb.zip'
-        )
+        test_data_zip_path = \
+            Path(__file__).resolve().parent.parent.parent / 'data/test.gdb.zip'
+
+        print(test_data_zip_path)
+
         # Create a temporary directory in which to place files.
         temp_dir = tempfile.mkdtemp()
         # Extract the test data.
