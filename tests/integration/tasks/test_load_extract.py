@@ -15,21 +15,42 @@ import tempfile
 import zipfile
 import luigi.mock
 import luigi.worker
-from mock import patch
 import testing.postgresql
 from dbgdb.db.postgres import schema_exists
 from dbgdb.ogr.postgres import OgrDrivers
 from dbgdb.tasks.postgres.extract import PgExtractTask
 from dbgdb.tasks.postgres.load import PgLoadTask
+import pytest
 
 
 # To learn more about mocking Luigi objects, visit the link below.
 # http://luigi.readthedocs.io/en/stable/api/luigi.mock.html
 
 
-class PgLoadTaskTestSuite(unittest.TestCase):
+class PgLoadExtractTaskTestSuite(unittest.TestCase):
+    """
+    This class contains tests that load sample data into a test Postgres
+    instance, then extract the data to files.
+    """
+    pgdb = None  #: the temporary Postgres database instance
+    temp_dir = tempfile.mkdtemp()  #: the temporary working directory
+    test_schema = 'test'  #: the name of the db schema for import/export
 
-    def test_createTempDb_load_noErrors(self):
+    def setUp(self):
+        """
+        Initialize the temporary PostgreSQL instance.
+        """
+        self.pgdb = testing.postgresql.Postgresql()
+
+    def tearDown(self):
+        """
+        Shut down the temporary PostgreSQL instance and clean up the temporary
+        working directory.
+        """
+        self.pgdb.stop()
+        shutil.rmtree(self.temp_dir)
+
+    def test_LoadExtract(self):
         """
         Arrange: Create a temporary database.
         Act: Load the data model.
@@ -39,8 +60,6 @@ class PgLoadTaskTestSuite(unittest.TestCase):
         test_data_zip_path = \
             Path(__file__).resolve().parent.parent.parent / 'data/test.gdb.zip'
 
-        print(test_data_zip_path)
-
         # Create a temporary directory in which to place files.
         temp_dir = tempfile.mkdtemp()
         # Extract the test data.
@@ -48,42 +67,44 @@ class PgLoadTaskTestSuite(unittest.TestCase):
             test_data_zip.extractall(temp_dir)
         # Now, figure out where the test data resides.
         test_gdb_path = str(Path(temp_dir) / 'test.gdb')
-        # Create the temporary database.
-        pgdb = testing.postgresql.Postgresql()
-        try:
-            # PART ONE: Run the 'load' task.
-            load_worker = luigi.worker.Worker()
-            load_worker.add(PgLoadTask(
-                url=pgdb.url(),
+
+        # PART ONE: Run the 'load' task.
+        load_worker = luigi.worker.Worker()
+        load_worker.add(PgLoadTask(
+            url=self.pgdb.url(),
+            schema='test',
+            indata=test_gdb_path,
+        ))
+        load_worker.run()
+        # Verify the import schema was created.
+        self.assertTrue(
+            schema_exists(
+                url=self.pgdb.url(),
+                schema=self.test_schema
+            ),
+            msg=f'After import the {self.test_schema} schema was not found.'
+        )
+
+        # PART TWO: Run the 'extract' task.
+        outdata_prefix = str(Path(self.temp_dir) / 'output')
+        for driver in [OgrDrivers.Spatialite]:
+            # The path to the output file will use the driver enumeration
+            # value as its extension.
+            outdata = f'{Path(outdata_prefix)}.{driver.value}'
+            # Run the export task.
+            extract_worker = luigi.worker.Worker()
+            extract_worker.add(PgExtractTask(
+                url=self.pgdb.url(),
                 schema='test',
-                indata=test_gdb_path,
+                outdata=str(outdata),
+                driver=driver
             ))
-            load_worker.run()
-            # Make sure the schema was created in the database.
-            self.assertTrue(schema_exists(url=pgdb.url(), schema='test'))
-
-            # PART TWO: Run the 'extract' task.
-            outdata_prefix = str(Path(temp_dir) / 'output')
-            for driver in [OgrDrivers.Spatialite]:
-                # The path to the output file will use the driver enumeration
-                # value as its extension.
-                outdata = f'{Path(outdata_prefix)}.{driver.value}'
-                extract_worker = luigi.worker.Worker()
-                extract_worker.add(PgExtractTask(
-                    url=pgdb.url(),
-                    schema='test',
-                    outdata=str(outdata),
-                    driver=driver
-                ))
-                extract_worker.run()
-                self.assertTrue(
-                    Path.exists(Path(outdata)),
-                    msg=f'File {outdata} was not created.'
-                )
-
-        finally:
-            pgdb.stop()
-            shutil.rmtree(temp_dir)
+            extract_worker.run()
+            # Verify the exported file exists.
+            self.assertTrue(
+                Path.exists(Path(outdata)),
+                msg=f'After export {outdata} was not created.'
+            )
 
 
 if __name__ == '__main__':
