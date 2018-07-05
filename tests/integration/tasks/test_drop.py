@@ -39,7 +39,7 @@ class PgDropTaskTestSuite(unittest.TestCase):
         """
         self.pgdb.stop()
 
-    def test_Drop(self):
+    def test_drop(self):
         """
         Create a schema in the database and use a :py:class:`PgDropTask` to
         remove it.

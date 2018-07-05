@@ -49,7 +49,7 @@ class PgLoadExtractTaskTestSuite(unittest.TestCase):
         self.pgdb.stop()
         shutil.rmtree(self.temp_dir)
 
-    def test_LoadExtract(self):
+    def test_loadExtract(self):
         """
         Load data into a database using a :py:class:`PgLoadTask` and extract
         it using a :py:class:`PgExtractTask`.
