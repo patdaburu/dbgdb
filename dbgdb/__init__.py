@@ -8,5 +8,5 @@
 Data pipeline utilities to help you get data into and out of your database.
 """
 
-__version__ = '0.0.3'  #: the working version
-__release__ = '0.0.3'  #: the release version
+__version__ = '0.0.4'  #: the working version
+__release__ = '0.0.4'  #: the release version

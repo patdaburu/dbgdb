@@ -136,9 +136,6 @@ def select_schema_tables(url: str, schema: str) -> Iterable[str]:
     :param url: the URL of the dat
     :param schema: the name of the schema
     """
-
-    print(sql_phrasebook.select_schema_tables.format(schema))
-
     with connect(url=url) as cnx:
         with cnx.cursor() as crs:
             crs.execute(sql_phrasebook.select_schema_tables.format(schema))

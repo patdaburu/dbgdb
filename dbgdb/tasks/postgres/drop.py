@@ -6,8 +6,8 @@
 .. currentmodule:: drop_db
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
 
-This module contains the :py:class:`DropDbTask` task which you can use to
-drop a database.
+This module contains the :py:class:`PgDropSchemaTask` task which you can use to
+drop a schema.
 """
 import luigi
 from dbgdb.targets.postgres import PgSchemaTarget

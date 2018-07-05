@@ -3,8 +3,6 @@
 
 # Created by pat on 5/21/18
 """
-.. currentmodule:: __init__.py
+.. currentmodule::  db.tasks.postgres
 .. moduleauthor:: Pat Daburu <pat@daburu.net>
-
-Say something descriptive about the '__init__.py' module.
 """
