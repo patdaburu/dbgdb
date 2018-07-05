@@ -68,13 +68,21 @@ class PgLoadExtractTaskTestSuite(unittest.TestCase):
 
         # PART ONE: Run the 'load' task.
         load_worker = luigi.worker.Worker()
-        load_worker.add(PgLoadTask(
+        load_task = PgLoadTask(
             url=self.pgdb.url(),
             schema='test',
             indata=test_gdb_path,
-        ))
+        )
+        load_worker.add(load_task)
         load_worker.run()
-        # Verify the import schema was created.
+        # Get the load task's target.
+        load_task_target = load_task.output()
+        # Verify that the load task's target claims it exists.
+        self.assertTrue(
+            load_task_target.exists(),
+            msg="The load task's target does not exist."
+        )
+        # Double-check the target's assertion.
         self.assertTrue(
             schema_exists(
                 url=self.pgdb.url(),
@@ -91,14 +99,22 @@ class PgLoadExtractTaskTestSuite(unittest.TestCase):
             outdata = f'{Path(outdata_prefix)}.{driver.value}'
             # Run the export task.
             extract_worker = luigi.worker.Worker()
-            extract_worker.add(PgExtractTask(
+            extract_task = PgExtractTask(
                 url=self.pgdb.url(),
                 schema='test',
                 outdata=str(outdata),
                 driver=driver
-            ))
+            )
+            extract_worker.add(extract_task)
             extract_worker.run()
-            # Verify the exported file exists.
+            # Get the extract task's target.
+            extract_task_target = extract_task.output()
+            # Verify the extract task's target claims it exists.
+            self.assertTrue(
+                extract_task_target.exists(),
+                msg="The extract task's target does not exist"
+            )
+            # Double-check the extract task target's claim.
             self.assertTrue(
                 Path.exists(Path(outdata)),
                 msg=f'After export {outdata} was not created.'
