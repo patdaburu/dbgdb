@@ -37,7 +37,7 @@ class PgExtractTask(luigi.Task):
     )
     driver: luigi.Parameter = luigi.EnumParameter(
         enum=OgrDrivers,
-        default=OgrDrivers.Spatialite,
+        default=OgrDrivers.EsriFileGDB,
         description='the export driver to use'
     )
 

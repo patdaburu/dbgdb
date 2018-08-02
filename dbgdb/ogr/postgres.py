@@ -113,18 +113,21 @@ def extract(outdata: Path,
         OGR2OGR,
         '-f', driver.value,
         str(outdata),
-        f"PG:host='{dbp.hostname}' user='{dbp.username}' dbname='{dbname}' "
+        f"PG:host='{dbp.hostname}' user='{dbp.username}' password='{dbp.password}'  dbname='{dbname}' "
         f"port='{dbp.port}'"#,
         #f'-lco', f'SCHEMA={schema}'
     ]
     # Add the names of all the tables in the target schema.
-    # cmd.extend([
-    #     f'{schema}.{table_name}'
-    #     for table_name
-    #     in select_schema_tables(url=url, schema=schema)
-    # ])  # TODO: Find a way to export the tables from a schema without appending the schema name.
     cmd.extend([
-        table_name for table_name in select_schema_tables(url=url, schema=schema)
-    ])
+        f'{schema}.{table_name}'
+        for table_name
+        in select_schema_tables(url=url, schema=schema)
+    ])  # TODO: Find a way to export the tables from a schema without appending the schema name.
+    # cmd.extend([
+    #     table_name for table_name in select_schema_tables(url=url, schema=schema)
+    # ])
+
+    print(' '.join(cmd))
+
     # Go! Go! Go!
     subprocess.check_call(cmd)
