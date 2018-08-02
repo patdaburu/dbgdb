@@ -17,6 +17,8 @@ can be used as a handy facility for running the task from a command line.
     To learn more about running Luigi, visit the Luigi project's
     `Read-The-Docs <http://luigi.readthedocs.io/en/stable/>`_ page.
 """
+import sys
+from pathlib import Path
 import multiprocessing
 from typing import Iterable
 import click
@@ -92,12 +94,20 @@ def run(tasks: Iterable[luigi.Task], info: Info):
 @click.option('-s', '--schema',
               default='imports',
               help='the target schema')
-@click.argument('indata', type=click.Path(exists=True))
+@click.argument('indata', type=click.Path(exists=False))
 @pass_info
 def load(info: Info, url: str, schema: str, indata: str):
     """
     Load data into a database instance.
     """
+    indata_path = Path(indata).resolve()
+    if not indata_path.is_dir():
+        click.echo(
+            click.style(
+                f'{str(indata_path)} is not a directory.', fg='red'
+            )
+        )
+        sys.exit(1)
     task = PgLoadTask(url=url, schema=schema, indata=indata)
     run([task], info)
 

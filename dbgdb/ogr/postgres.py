@@ -27,6 +27,7 @@ class OgrDrivers(Enum):
     """
     These are the supported OGR drivers.
     """
+    EsriFileGDB = 'FileGDB'
     GeoPackage = 'GPKG'
     Spatialite = 'SQLITE'
     PostGIS = 'PostgreSQL'
@@ -68,8 +69,8 @@ def load(indata: Path,
     cmd = [
         OGR2OGR,
         '-f', driver.value,
-        f"PG:host='{dbp.hostname}' user='{dbp.username}' dbname='{dbname}' "
-        f"port='{dbp.port}'",
+        f"PG:host='{dbp.hostname}' user='{dbp.username}' password='{dbp.password}' "
+        f"dbname='{dbname}' port='{dbp.port}'",
         '-lco', f'SCHEMA={schema}'
     ]
     # If we're overwriting...
@@ -84,6 +85,8 @@ def load(indata: Path,
         cmd.extend(['--config', 'PG_USE_COPY', 'YES'])
     # Lastly, add the target geodatabase.
     cmd.append(str(indata))
+
+    print(' '.join(cmd))
     # https://gis.stackexchange.com/questions/154004/execute-ogr2ogr-from-python
     subprocess.check_call(cmd)
 
@@ -91,7 +94,7 @@ def load(indata: Path,
 def extract(outdata: Path,
             schema: str = 'imports',
             url: str = 'postgresql://postgres@localhost:5432/postgres',
-            driver: OgrDrivers = OgrDrivers.Spatialite):
+            driver: OgrDrivers = OgrDrivers.EsriFileGDB):
     """
     Extract a schema from a PostgreSQL database to a file geodatabase.
 
@@ -111,13 +114,17 @@ def extract(outdata: Path,
         '-f', driver.value,
         str(outdata),
         f"PG:host='{dbp.hostname}' user='{dbp.username}' dbname='{dbname}' "
-        f"port='{dbp.port}'"
+        f"port='{dbp.port}'"#,
+        #f'-lco', f'SCHEMA={schema}'
     ]
     # Add the names of all the tables in the target schema.
+    # cmd.extend([
+    #     f'{schema}.{table_name}'
+    #     for table_name
+    #     in select_schema_tables(url=url, schema=schema)
+    # ])  # TODO: Find a way to export the tables from a schema without appending the schema name.
     cmd.extend([
-        f'{schema}.{table_name}'
-        for table_name
-        in select_schema_tables(url=url, schema=schema)
+        table_name for table_name in select_schema_tables(url=url, schema=schema)
     ])
     # Go! Go! Go!
     subprocess.check_call(cmd)

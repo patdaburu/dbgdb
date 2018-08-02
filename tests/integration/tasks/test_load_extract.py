@@ -33,7 +33,8 @@ class PgLoadExtractTaskTestSuite(unittest.TestCase):
     """
     pgdb = None  #: the temporary Postgres database instance
     temp_dir = tempfile.mkdtemp()  #: the temporary working directory
-    test_schema = 'test'  #: the name of the db schema for import/export
+    #test_schema = 'test'  #: the name of the db schema for import/export
+    test_schema = 'public'
 
     def setUp(self):
         """
@@ -64,13 +65,14 @@ class PgLoadExtractTaskTestSuite(unittest.TestCase):
         with zipfile.ZipFile(str(test_data_zip_path), 'r') as test_data_zip:
             test_data_zip.extractall(temp_dir)
         # Now, figure out where the test data resides.
-        test_gdb_path = str(Path(temp_dir) / 'test.gdb')
+        test_gdb_path = str(Path(temp_dir) / 'dbgdb_Test_Data.gdb')
 
         # PART ONE: Run the 'load' task.
         load_worker = luigi.worker.Worker()
         load_task = PgLoadTask(
             url=self.pgdb.url(),
-            schema='test',
+#            schema='test',
+            schema=self.test_schema,
             indata=test_gdb_path,
         )
         load_worker.add(load_task)
@@ -93,10 +95,12 @@ class PgLoadExtractTaskTestSuite(unittest.TestCase):
 
         # PART TWO: Run the 'extract' task.
         outdata_prefix = str(Path(self.temp_dir) / 'output')
-        for driver in [OgrDrivers.Spatialite]:
+        for driver, file_ext in [
+            (OgrDrivers.EsriFileGDB, '.gdb')
+        ]:
             # The path to the output file will use the driver enumeration
             # value as its extension.
-            outdata = f'{Path(outdata_prefix)}.{driver.value}'
+            outdata = f'{Path(outdata_prefix)}.{driver.value}{file_ext}'
             # Run the export task.
             extract_worker = luigi.worker.Worker()
             extract_task = PgExtractTask(
